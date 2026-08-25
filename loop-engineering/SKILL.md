@@ -134,4 +134,3 @@ Propose a durable workflow change only after repeated failures or one high-sever
 Change one load-bearing component at a time and preserve negative evidence such as misses, false positives, rejected outputs, and regressions. Require user approval before changing global rules, Skills, agents, memory, permissions, or automation authority. Keep project-specific knowledge in the project; keep this portable Skill universal.
 
 End every task with a compact receipt: outcome, changed scope, gate results, pre-existing or unverified conditions, remaining risks, and state/next action if any.
-
