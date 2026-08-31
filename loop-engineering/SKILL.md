@@ -1,45 +1,54 @@
 ---
 name: loop-engineering
 description: >-
-  Use for every non-trivial Codex project task with multiple meaningful steps,
-  objective checks, retries, cross-session state, recurring execution, or
-  material risk. Route work through a lightweight direct, closed-loop, or
-  exploration mode; define a contract, act in bounded increments, verify with
-  evidence, and stop or escalate explicitly. Also use for loop engineering and
-  autonomous agent workflow design. Skip simple answers and trivial one-step edits.
+  Guide complex or consequential Codex work through evidence-based iteration,
+  including difficult debugging, cross-session tasks, and unattended workflows.
+  Also use for loop engineering and autonomous workflow design. Do not activate
+  solely because a task has several steps or can be tested. Skip simple answers
+  and routine low-risk edits; if explicitly invoked for them, use Direct.
 metadata:
-  version: "2.0.0"
+  version: "2.1.0"
 ---
 
 # Codex Bounded Evidence Loop
 
-This file is the complete portable workflow. It has no dependency on global rules, named custom agents, or companion references. The purpose of a loop is to move a task toward a fixed outcome through observable feedback under finite authority and budget, not to keep an agent running.
+Move work toward the user's outcome through observable feedback within existing authority and resource limits. Scale the process to the task: extra planning, artifacts, tests, and reviews must justify their cost. This workflow is self-contained and requires no named custom agents or companion files.
 
 ## Route first
 
-- **Direct:** clear, local, low-risk work with one meaningful action or check. Use a compact internal contract, the smallest relevant check, and a final receipt. Do not add state files, worktrees, or review roles.
-- **Closed Loop:** non-trivial work with objective completion evidence. Use the full protocol below.
-- **Exploration:** the finish line or implementation path is unknown. Set a time/turn budget and research questions; end with findings, options, risks, and a proposed Closed Loop contract. Do not silently begin implementation.
+Choose the lightest adequate mode by risk, scope, uncertainty, and recovery needs, not by tool-call count or diff size. Respect explicit user requirements and applicable project validation rules.
+
+- **Direct:** routine, well-scoped, low-risk work, including a short inspect-edit-check sequence. Infer the intended result and boundaries internally, do the work, perform the smallest relevant check, and report briefly. Do not add a formal plan, contract checklist, state file, worktree, or review role just to follow this skill. **Stop here; the Closed Loop protocol below is not required.**
+- **Closed Loop:** work with interacting changes, difficult debugging, consequential behavior, repeated failed approaches, or recovery/unattended needs. Use the relevant sections below without turning every section into a required artifact.
+- **Exploration:** the user requests research, review, or options without implementation, or an unresolved outcome, acceptance condition, or major trade-off prevents responsible implementation. Investigate bounded questions and deliver the requested findings. For an implementation request, continue once the uncertainty is resolved within existing scope and authority; ask only for unresolved material decisions. A research-only request does not authorize implementation.
+
+An unknown implementation path alone is not a reason to stop at a proposal. If the user has authorized a clear outcome, investigate within Direct or Closed Loop and continue through implementation and verification.
+
+A spelling-only correction in prose normally needs inspecting the edited text or diff, not a new test or a full build. A one-character change to authorization logic may need behavioral tests and review. Reassess the mode if the consequences turn out to be different.
 
 Recurring or scheduled work wraps a Closed Loop and additionally needs a trigger, idempotency, duplicate suppression, per-run limits, and escalation.
 
-## Freeze a task contract
+## Define the Closed Loop contract
 
-Before substantial implementation, define:
+Derive a concise contract from the request, established session decisions, and applicable instructions before substantial implementation. Keep it internal unless sharing assumptions or decisions would help; do not ask the user to fill out or approve a routine checklist.
 
 ```text
 Outcome: the user-visible result
 Scope / non-goals: what may and may not change
 Constraints: compatibility, safety, performance, style, and policy limits
-Acceptance gates: observable evidence that proves completion
+Acceptance gates: observable evidence covering the required behavior
 Authority: allowed writes and external side effects
-Budget: finite attempts, time, cost, or operations
+Budget: hard limits and their source; hypothesis or phase checkpoints
 Stop/escalate: conditions requiring a new strategy or user decision
 ```
 
-Make gates behavioral and machine-checkable when possible: tests, builds, static checks, screenshots, runtime probes, data comparisons, or reproducible steps. A model's statement that work looks correct is not a gate.
+Before freezing the contract, map user requirements and key failure paths to evidence; identify material gaps and distinguish requirements from assumptions. For a reproducible bug, prefer a check that fails before the fix and passes after it when feasible. Make gates behavioral and machine-checkable where possible. A model's confidence alone is not completion evidence.
 
-Keep the contract fixed during a cycle. If evidence invalidates the outcome, scope, constraints, gates, or authority, explicitly re-contract and seek user direction when material. Never move the finish line to manufacture a pass. If the user explicitly invokes a persistent goal, use this contract as its finish line; do not create one merely because work is complex.
+Keep the outcome, boundaries, and required evidence stable during a cycle. New diagnostics, stronger coverage, and a different in-scope implementation do not by themselves require user approval. If evidence invalidates the contract, record the correction and seek direction only for a material unresolved change to the user's outcome, scope, authority, or risk. Never weaken acceptance to manufacture a pass. Create a persistent goal only when explicitly requested.
+
+### Budget and progress
+
+Respect hard time, cost, and operation limits from the user, system, environment, or an authorized unattended-run configuration. For interactive work without a hard task limit, set finite checkpoints for a hypothesis or phase. At a checkpoint, reassess progress and choose the next justified step; do not silently impose an arbitrary whole-task cutoff. New evidence must change the diagnosis or next action, not merely produce another log. Unattended work requires enforceable per-run and cumulative limits.
 
 ## Run the bounded loop
 
@@ -55,32 +64,32 @@ Keep the contract fixed during a cycle. If evidence invalidates the outcome, sco
 
 - Make the smallest coherent change that can produce new evidence.
 - Keep one writer per checkout. Parallel writers require isolated worktrees and explicit ownership boundaries; parallelize only independent work.
-- Do not commit, push, open a PR, deploy, delete material data, or message external people unless that action is explicitly inside the user's authority grant.
+- Continue requested, reversible, in-scope local work and validation under existing authorization. Check authority before committing, pushing, opening a PR, deploying, deleting material data, or messaging external people; those actions must be covered by the user's grant. Honor valid prior authorization without asking again. Complete safe preparatory work before requesting a genuinely missing approval.
 
 ### 3. Verify
 
-Use the cheapest reliable evidence first, then expand in proportion to risk:
+Use the cheapest reliable evidence first. Expand only for relevant behavior, dependency impact, material risk, or applicable project requirements; the following are not a mandatory full suite for every change:
 
 1. inspect scope and diff;
-2. run targeted deterministic checks;
+2. run targeted deterministic checks for affected behavior;
 3. run broader integration, build, runtime, security, performance, or visual checks when relevant;
-4. perform an independent verification pass for ambiguous, medium/high-impact, or difficult-to-test work;
+4. use the review guidance below for consequential or difficult-to-test work;
 5. retain a human gate for release, production, destructive, legal, financial, privacy-sensitive, or judgment-heavy actions unless explicitly delegated.
 
-Label every gate `passed`, `failed`, `not run`, or `inferred`. Separate pre-existing failures from task regressions and rerun affected gates after material corrections.
+Do not add tests that merely restate an edit or mirror its implementation. Label contract gates `passed`, `failed`, `not run`, or `inferred`, and identify what was actually checked. Separate pre-existing failures from task regressions and rerun affected gates after material corrections. An unavailable check remains unverified; try relevant safe alternatives without claiming they prove more than they do.
 
 ### 4. Decide
 
 Choose exactly one outcome after each cycle:
 
 - **Complete:** all required gates pass within contract and remaining risk is disclosed.
-- **Revise:** the failure is localized, the next action is different and evidence-producing, and budget remains.
-- **Re-contract:** evidence changes the contract; seek user input when material.
-- **Escalate/stop:** authority or evidence is insufficient, budget is exhausted, a dependency is unavailable, or another cycle would add cost without evidence.
+- **Revise:** a different, evidence-producing action is justified within the remaining hard limits. Further diagnosis is valid even before the failure is localized.
+- **Re-contract:** evidence changes the contract; explain the correction and seek user input only for unresolved material decisions.
+- **Escalate/stop:** a hard limit is reached, required authority or a material user decision is missing, or no safe evidence-producing path remains after considering available alternatives. A missing dependency or failed command alone is not a reason to abandon other useful in-scope work. Report incomplete work honestly.
 
-Two consecutive cycles with the same failure and no new evidence trigger a circuit-breaker: change strategy if a safe in-scope alternative exists, otherwise stop and report. Never weaken tests, remove acceptance criteria, expand permissions, or replay an unchanged prompt to force completion.
+Two consecutive cycles testing the same hypothesis with the same failure and no new evidence trigger a circuit-breaker: change strategy if a safe in-scope alternative exists, otherwise stop that line of attack and report what remains. This is not a two-tool-call limit. Never weaken tests, remove acceptance criteria, expand permissions, or replay an unchanged prompt to force completion.
 
-When revising, pass forward the exact gate/procedure, observed versus expected result, relevant error or artifact, changed state, baseline failures, remaining budget, and next smallest hypothesis.
+When revising or handing off, retain the relevant procedure, observed versus expected result, error or artifact, changed state, baseline failures, remaining hard limits, and next smallest hypothesis. Use concise working context unless durable state is needed.
 
 ### 5. Record only when needed
 
@@ -107,8 +116,8 @@ Store observable facts and decisions, not conversation dumps or private chain-of
 
 No named custom agent is required.
 
-- **Discovery role:** use only when architecture, change surface, baseline behavior, or acceptance commands are uncertain. Whether delegated to an available read-only subagent or performed directly, return key paths/symbols, current behavior, constraints, minimal change surface, candidate gates, and unknowns with evidence.
-- **Verification role:** for work warranting independent review, give a fresh read-only subagent the frozen contract, diff, and raw evidence when delegation is available. Otherwise perform a separate skeptical pass against the frozen contract. Return severity-ordered findings, gate statuses, a `PASS`, `BLOCK`, or `INCONCLUSIVE` verdict, and remaining unverified risk.
+- **Discovery role:** use when architecture, change surface, baseline behavior, or acceptance commands are uncertain. Work directly or delegate an independent read-only investigation when useful. Return the relevant paths, behavior, constraints, candidate gates, and unknowns with evidence; continue authorized implementation after discovery.
+- **Verification role:** when an independent pass can address a distinct risk or is explicitly required, give a fresh read-only subagent the user requirements, contract, diff, and raw evidence. Ask it to challenge acceptance coverage as well as the implementation. If unavailable, perform a skeptical self-review and label it as such. Report the review source (`self-review` or `independent agent review`), severity-ordered findings, gate statuses, a `PASS`, `BLOCK`, or `INCONCLUSIVE` verdict, and material unverified risk. Self-review does not satisfy an explicitly required independent-review gate; neither review type replaces behavioral evidence.
 
 Deterministic gates remain primary. Skip role separation for low-risk Direct work; use another specialist pass only for a distinct risk such as security or performance.
 
@@ -118,19 +127,19 @@ Only create or modify automation when the user requests it. Define:
 
 - trigger and the single observation that decides whether work exists;
 - one bounded action per cycle;
-- idempotency and duplicate suppression;
-- per-run and cumulative budgets;
+- implemented idempotency and duplicate suppression;
+- enforceable per-run and cumulative budgets;
 - machine-checkable success and stop conditions;
 - recovery after interruption;
 - escalation destination and human review point;
 - exact authority for repository and external writes.
 
-Use an isolated worktree for background repository writes. Prefer producing a reviewable finding, diff, issue, or draft over automatically merging, publishing, deploying, or messaging. Observe early runs before increasing cadence or authority.
+Use an isolated worktree for background repository writes. Back the relevant safeguards with runtime mechanisms such as task locks, durable run records, and budget checks; a written requirement is not an implemented guarantee. If enforcement is unavailable, disclose that limitation and keep execution supervised. Prefer a reviewable finding, diff, issue, or draft over automatic release or external communication. Observe early runs before increasing cadence or authority.
 
 ## Evolve the method only from evidence
 
-Propose a durable workflow change only after repeated failures or one high-severity incident. Record the observed evidence, smallest responsible component, proposed change, same-case before/after evaluation, and rollback or retirement criterion.
+Outside a user-requested revision, propose a durable workflow change only after repeated failures or one high-severity incident. Record the evidence, smallest responsible component, proposed change, relevant before/after evaluation, and rollback or retirement criterion. Do not turn a single low-risk example into a universal rule.
 
 Change one load-bearing component at a time and preserve negative evidence such as misses, false positives, rejected outputs, and regressions. Require user approval before changing global rules, Skills, agents, memory, permissions, or automation authority. Keep project-specific knowledge in the project; keep this portable Skill universal.
 
-End every task with a compact receipt: outcome, changed scope, gate results, pre-existing or unverified conditions, remaining risks, and state/next action if any.
+For Direct work, a brief result and relevant check or limitation are sufficient. For Closed Loop work, give a compact receipt covering outcome, changed scope, gate results, review source when used, material unverified conditions or risks, and any remaining work. Omit empty fields and routine ceremony.
